@@ -1,0 +1,1 @@
+export const  insertTarea = 'INSERT INTO tareas (titulo, descripcion, estatus, fecha, comentarios, responsable, tags) VALUES(?,?,?,?,?,?,?)';
