@@ -1,5 +1,5 @@
 import {conn} from "../database/database.js";
-import {insertTarea} from "../database/querysTareas.js";
+import {insertTarea, selectTareas} from "../database/querysTareas.js";
 
 export const crearTarea = async (req, res) => {
     try {
@@ -11,4 +11,15 @@ export const crearTarea = async (req, res) => {
         return res.status(500).json({massage: "Error"});
     }
 
+}
+
+
+export const verTareas = async (req, res) => {
+    try {
+        const [row] = await conn.query(selectTareas);
+        res.status(200).json(row);
+
+    } catch (error) {
+        return res.status(500).json({massage: "Error"});
+    }
 }
