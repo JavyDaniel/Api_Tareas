@@ -3,3 +3,5 @@ export const  insertTarea = 'INSERT INTO tareas (titulo, descripcion, estatus, f
 export const selectTareas = 'SELECT * FROM tareas';
 
 export const selectTarea = 'SELECT * FROM tareas WHERE id = ?';
+
+export const deleteTarea = 'DELETE FROM tareas WHERE id = ?';

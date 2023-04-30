@@ -1,5 +1,5 @@
 import {conn} from "../database/database.js";
-import {insertTarea, selectTarea, selectTareas} from "../database/querysTareas.js";
+import {deleteTarea, insertTarea, selectTarea, selectTareas} from "../database/querysTareas.js";
 
 export const crearTarea = async (req, res) => {
     try {
@@ -35,6 +35,23 @@ export const verTarea = async (req, res)=> {
         }
 
         res.json(rows);
+
+    }catch (error) {
+        return res.status(500).json({massage: "Error"});
+    }
+
+}
+
+export const eliminarTarea = async (req, res)=> {
+    try {
+        const { id } = req.params;
+        const [rows] = await conn.query(deleteTarea, [id]);
+
+        if(!rows.affectedRows){
+            return res.status(404).json({ message: "Tarea no encontrada" });
+        }
+
+        res.sendStatus(204);
 
     }catch (error) {
         return res.status(500).json({massage: "Error"});
