@@ -55,3 +55,9 @@ export const actualizarUnaTarea = async (titulo, descripcion, estatus, fecha, co
 
 }
 
+export const eliminarUnaTarea = async (tarea_id) => {
+
+     await conn.query(deleteTarea, [tarea_id]);
+
+}
+

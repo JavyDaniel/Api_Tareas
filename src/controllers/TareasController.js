@@ -1,12 +1,7 @@
-import {conn} from "../database/database.js";
-import {
-    deleteTarea,
-
-} from "../database/querysTareas.js";
 import {
     actualizarUnaTarea,
     buscarTareas, buscarUsuario,
-    crearUnaTarea, validarUsuarioTarea
+    crearUnaTarea, eliminarUnaTarea, validarUsuarioTarea
 } from "../services/TareasService.js";
 
 export const crearTarea = async (req, res) => {
@@ -28,8 +23,6 @@ export const crearTarea = async (req, res) => {
     }
 
 }
-
-
 export const verTareas = async (req, res) => {
     try {
         const {usuario_id} = req.params;
@@ -60,7 +53,6 @@ export const verTareas = async (req, res) => {
         return res.status(500).json({massage: "Error"});
     }
 }
-
 
 export const verTarea = async (req, res) => {
     try {
@@ -105,26 +97,27 @@ export const actualizarTarea = async (req, res) => {
 
         await actualizarUnaTarea(titulo, descripcion, estatus, fecha, comentarios, responsable, tags, tarea.id)
 
-        res.status(200).json("La tarea se actualizo correctamente");
+        res.status(200).json("La tarea " + tarea.id + " del usuario "+ usuario.username+ " se actualizo correctamente");
 
     } catch (error) {
         return res.status(500).json({massage: "Error"});
     }
-
 }
 export const eliminarTarea = async (req, res) => {
     try {
-        const {id} = req.params;
-        const [rows] = await conn.query(deleteTarea, [id]);
+        const {usuario_id, tarea_id} = req.params;
 
-        if (!rows.affectedRows) {
-            return res.status(404).json({message: "Tarea no encontrada"});
+        const {usuario, tarea, error} = await validarUsuarioTarea(usuario_id, tarea_id);
+
+        if (error) {
+            return res.status(404).json({message: error});
         }
 
-        res.sendStatus(204);
+        await eliminarUnaTarea(tarea.id)
+
+        res.status(200).json("La tarea " + tarea.id + " del usuario "+ usuario.username+ " se elimino correctamente");
 
     } catch (error) {
         return res.status(500).json({massage: "Error"});
     }
-
 }
