@@ -7,6 +7,7 @@ import {
     selectUsuario,
     updateTarea
 } from "../database/querysTareas.js";
+import {buscarTarea, buscarUsuario} from "../services/TareasService.js";
 
 export const crearTarea = async (req, res) => {
     try {
@@ -65,36 +66,36 @@ export const verTarea = async (req, res) => {
     try {
         const {usuario_id, tarea_id} = req.params;
 
-        const [usuario] = await conn.query(selectUsuario, [usuario_id]);
+        const {usuario, errorUsuario} = await buscarUsuario(usuario_id);
 
-        if (!usuario.length) {
-            return res.status(404).json({message: "Usuario no encontrado"});
+        if (errorUsuario) {
+            return res.status(404).json({message: errorUsuario});
         }
 
-        const [tarea] = await conn.query(selectTarea, [tarea_id]);
+        const {tarea, errorTarea} = await buscarTarea(tarea_id);
 
-        if (!tarea.length) {
-            return res.status(404).json({message: "Tarea no encontrada"});
+        if (errorTarea) {
+            return res.status(404).json({message: errorTarea});
         }
 
-        if (usuario[0].id !== tarea[0].usuario_id) {
-            return res.status(400).json({message: "La tarea no pertenece al usuario " + usuario[0].username});
+        if (usuario.id !== tarea.usuario_id) {
+            return res.status(400).json({message: "La tarea no pertenece al usuario " + usuario.username});
         }
 
-        const tareaCompleta = tarea.map(t => ({
-            ...t,
-            fecha: new Date(t.fecha).toLocaleDateString('es-MX', {
+        const tareaCompleta ={
+            ...tarea,
+            fecha: new Date(tarea.fecha).toLocaleDateString('es-MX', {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit"
             }).replace(/\//g, '-'),
-            comentarios: t.comentarios === null ? "" : t.comentarios,
-            responsable: t.responsable == null ? "": t.responsable,
-            tags: t.tags == null ? "" : t.tags
-        }));
+            comentarios: tarea.comentarios === null ? "" : t.comentarios,
+            responsable: tarea.responsable == null ? "": t.responsable,
+            tags: tarea.tags == null ? "" : tarea.tags
+        };
 
-        delete tareaCompleta[0].usuario_id;
-        res.status(200).json({Usuario: usuario[0].username, Tarea: tareaCompleta[0]});
+        delete tareaCompleta.usuario_id;
+        res.status(200).json({Usuario: usuario.username, Tarea: tareaCompleta});
 
     } catch (error) {
         return res.status(500).json({massage: "Error"});
