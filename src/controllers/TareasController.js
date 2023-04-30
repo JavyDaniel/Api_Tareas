@@ -7,7 +7,7 @@ import {
     selectUsuario,
     updateTarea
 } from "../database/querysTareas.js";
-import {buscarTarea, buscarUsuario, crearUnaTarea} from "../services/TareasService.js";
+import {buscarTarea, buscarTareas, buscarUsuario, crearUnaTarea} from "../services/TareasService.js";
 
 export const crearTarea = async (req, res) => {
     try {
@@ -34,13 +34,13 @@ export const verTareas = async (req, res) => {
     try {
         const {usuario_id} = req.params;
 
-        const [usuario] = await conn.query(selectUsuario, [usuario_id]);
+        const {usuario, errorUsuario} = await buscarUsuario(usuario_id);
 
-        if (!usuario.length) {
-            return res.status(404).json({message: "Usuario no encontrado"});
+        if (errorUsuario) {
+            return res.status(404).json({message: errorUsuario});
         }
 
-        const [rows] = await conn.query(selectTareas, [usuario_id]);
+        const rows = await buscarTareas(usuario_id);
 
         const tareas = rows.map(tarea => ({
             titulo: tarea.titulo,
@@ -54,7 +54,7 @@ export const verTareas = async (req, res) => {
 
         }));
 
-        res.status(200).json({Usuario: usuario[0].username, Tareas: tareas});
+        res.status(200).json({Usuario: usuario.username, Tareas: tareas});
 
     } catch (error) {
         return res.status(500).json({massage: "Error"});

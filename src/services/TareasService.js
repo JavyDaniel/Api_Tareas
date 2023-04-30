@@ -28,6 +28,11 @@ export const buscarTarea = async (tarea_id) => {
     }
     return {tarea: tarea[0]};
 }
+export const buscarTareas = async (usuario_id) => {
+
+    const [rows] = await conn.query(selectTareas, [usuario_id]);
+    return rows;
+}
 
 export const crearUnaTarea = async (titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario_id) => {
 
