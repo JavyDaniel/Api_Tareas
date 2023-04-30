@@ -5,7 +5,7 @@ const router = Router();
 
 router
     .post('/crearTarea/:usuario_id', crearTarea)
-    .get('/verTareas', verTareas)
+    .get('/verTareas/:usuario_id', verTareas)
     .get('/verTarea/:id', verTarea)
     .put('/actualizarTarea/:id', actualizarTarea)
     .delete('/eliminarTarea/:id', eliminarTarea);

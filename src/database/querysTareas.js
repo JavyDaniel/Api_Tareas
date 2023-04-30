@@ -1,6 +1,6 @@
 export const insertTarea = 'INSERT INTO tareas (titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario_id) VALUES(?,?,?,?,?,?,?,?)';
 
-export const selectTareas = 'SELECT * FROM tareas';
+export const selectTareas = 'SELECT * FROM tareas WHERE usuario_id = ?';
 
 export const selectTarea = 'SELECT * FROM tareas WHERE id = ?';
 
