@@ -29,3 +29,9 @@ export const buscarTarea = async (tarea_id) => {
     return {tarea: tarea[0]};
 }
 
+export const crearUnaTarea = async (titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario_id) => {
+
+    const [tarea] = await conn.query(insertTarea, [titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario_id]);
+    return tarea;
+}
+

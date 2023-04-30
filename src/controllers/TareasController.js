@@ -7,20 +7,20 @@ import {
     selectUsuario,
     updateTarea
 } from "../database/querysTareas.js";
-import {buscarTarea, buscarUsuario} from "../services/TareasService.js";
+import {buscarTarea, buscarUsuario, crearUnaTarea} from "../services/TareasService.js";
 
 export const crearTarea = async (req, res) => {
     try {
         const {usuario_id} = req.params;
         const {titulo, descripcion, estatus, fecha, comentarios, responsable, tags} = req.body
 
-        const [usuario] = await conn.query(selectUsuario, [usuario_id]);
+        const {usuario, errorUsuario} = await buscarUsuario(usuario_id);
 
-        if (!usuario.length) {
-            return res.status(404).json({message: "Usuario no encontrado"});
+        if (errorUsuario) {
+            return res.status(404).json({message: errorUsuario});
         }
 
-        const [tarea] = await conn.query(insertTarea, [titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario[0].id]);
+        const tarea = await crearUnaTarea(titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario.id)
         res.status(201).json({id: tarea.insertId, titulo, estatus});
 
     } catch (error) {
