@@ -1,11 +1,26 @@
 import {conn} from "../database/database.js";
-import {deleteTarea, insertTarea, selectTarea, selectTareas, updateTarea} from "../database/querysTareas.js";
+import {
+    deleteTarea,
+    insertTarea,
+    selectTarea,
+    selectTareas,
+    selectUsuario,
+    updateTarea
+} from "../database/querysTareas.js";
 
 export const crearTarea = async (req, res) => {
     try {
+        const {usuario_id} = req.params;
         const {titulo, descripcion, estatus, fecha, comentarios, responsable, tags} = req.body
-        const [rows] = await conn.query(insertTarea, [titulo, descripcion, estatus, fecha, comentarios, responsable, tags]);
-        res.status(201).json({id: rows.insertId, titulo, estatus});
+
+        const [usuario] = await conn.query(selectUsuario, [usuario_id]);
+
+        if(!usuario.length){
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+         const [tarea] = await conn.query(insertTarea, [titulo, descripcion, estatus, fecha, comentarios, responsable, tags, usuario[0].id]);
+         res.status(201).json({id: tarea.insertId, titulo, estatus});
 
     } catch (error) {
         return res.status(500).json({massage: "Error"});
@@ -53,7 +68,7 @@ export const actualizarTarea = async (req, res)=> {
         }
 
         const [rows] = await conn.query(selectTarea, [id]);
-        res.status(200).json(rows[0]);
+        res.status(200).json(rows[0 ]);
 
     }catch (error) {
         return res.status(500).json({massage: "Error"});

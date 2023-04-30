@@ -4,7 +4,7 @@ import {actualizarTarea, crearTarea, eliminarTarea, verTarea, verTareas} from ".
 const router = Router();
 
 router
-    .post('/crearTarea', crearTarea)
+    .post('/crearTarea/:usuario_id', crearTarea)
     .get('/verTareas', verTareas)
     .get('/verTarea/:id', verTarea)
     .put('/actualizarTarea/:id', actualizarTarea)
